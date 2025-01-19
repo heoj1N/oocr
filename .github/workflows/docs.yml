@@ -6,9 +6,17 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   docs:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
@@ -20,6 +28,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints
         pip install -r requirements.txt
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
     - name: Build docs
       run: |
         cd docs
@@ -28,12 +38,14 @@ jobs:
         cp ../docs/conf.py source/conf.py
         cp ../docs/index.rst source/index.rst
         mkdir -p source/guides source/api
-        cp -r ../docs/guides/* source/guides/
-        cp -r ../docs/api/* source/api/
+        cp -r ../docs/guides/* source/guides/ || true
+        cp -r ../docs/api/* source/api/ || true
         make html
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
+        touch build/html/.nojekyll
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs/build/html
+        path: docs/build/html
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
