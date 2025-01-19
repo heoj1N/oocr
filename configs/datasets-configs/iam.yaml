@@ -1,0 +1,24 @@
+# Data Parameters
+data: "data/datasets/iam_words"  # Directory with labeled image data
+dataset: "IAM"                      # Dataset type: IAM, MNIST, custom
+fraction: 0.1                       # Dataset fraction for splits
+
+# Model Parameters
+model: "microsoft/trocr-large-handwritten"  # Model identifier
+checkpoint: null                            # Path to checkpoint file for resuming training
+special_chars: None                         # Special characters to add to tokenizer
+
+# Training Parameters
+epochs: 14                    # Number of training epochs
+batchsize: 4                 # Batch size for training
+val_iters: 1                 # Run validation every N epochs
+test_iters: 2               # Run testing every N epochs
+lr: 0.000001                # Learning rate (1e-6)
+lr_patience: 2              # LR scheduler patience epochs
+lr_factor: 0.5              # LR scheduler reduction factor
+num_samples: 10             # Number of samples to print during evaluation
+seed: 42                    # Random seed for reproducibility
+
+# Output Parameters
+output: "data/output"       # Output directory path
+timestamp: false            # Whether to add timestamp to output directory

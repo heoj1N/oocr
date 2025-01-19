@@ -1,0 +1,30 @@
+# Data Configuration
+data: "data/datasets/SROIE2019"  # Or your actual path
+dataset: "SROIE"
+fraction: 1.0
+test_frac: 1.0
+
+# Model Configuration
+model: "microsoft/trocr-base-printed"  # Better for receipt text
+tokenizer: null
+special_chars: ["£", "$", "€", "%", "&", "@", "#", "¥", ":", "/", "-", "_", "(", ")", "[", "]", "{", "}", "+", "=", "*"]  # Common receipt characters
+
+# Training Configuration
+epochs: 10
+batchsize: 8
+lr: 1e-6
+lr_patience: 2
+lr_factor: 0.5
+seed: 42
+val_iters: 1
+test_iters: 2
+num_samples: 10
+
+# Output Configuration
+output: "data/output/sroie"
+timestamp: true
+save_predictions: trueolok
+suffix: ""
+
+# Augmentation
+use_augmentation: false 

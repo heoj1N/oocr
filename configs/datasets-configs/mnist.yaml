@@ -1,0 +1,37 @@
+# Data Parameters
+data: null                           # Not needed for MNIST dataset
+dataset: "MNIST"                     # Dataset type: using built-in MNIST
+fraction: 0.05                       # Dataset fraction for splits
+testdata: null                       # Not needed for MNIST (uses built-in test set)
+test_frac: 1.0                      # Use full MNIST test set
+
+# Model Parameters
+model: "microsoft/trocr-large-handwritten"  # Model identifier
+checkpoint: null                            # Path to checkpoint file for resuming training
+special_chars:                              # Special characters to add to tokenizer
+  - "ă"
+  - "â"
+  - "î"
+  - "ș"
+  - "ț"
+  - "Ă"
+  - "Â"
+  - "Î"
+  - "Ș"
+  - "Ț"
+
+# Training Parameters
+epochs: 20                    # Number of training epochs
+batchsize: 4                 # Batch size for training
+val_iters: 1                 # Run validation every N epochs
+test_iters: 2               # Run testing every N epochs
+lr: 0.000001                # Learning rate (1e-6)
+lr_patience: 2              # LR scheduler patience epochs
+lr_factor: 0.5              # LR scheduler reduction factor
+num_samples: 10             # Number of samples to print during evaluation
+seed: 42                    # Random seed for reproducibility
+
+# Output Parameters
+output: "data/output"       # Output directory path
+timestamp: false            # Whether to add timestamp to output directory
+
