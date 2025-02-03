@@ -8,7 +8,7 @@ from torch.optim import AdamW
 from tqdm import tqdm
 from transformers import logging
 from collections import defaultdict
-from util import (
+from oocr.utils.util import (
     plot_metric, set_seed, load_config, 
     setup_directories, save_checkpoint,
     create_logger, update_tokenizer,
@@ -18,7 +18,7 @@ from models import (
     get_processor_and_model, train_step,
     generate_step, calculate_confidence_scores,
 )
-from dataset import (
+from oocr.data.datasets.dataset import (
     init_dataset,
 )
 
@@ -26,7 +26,20 @@ logging.set_verbosity_error()
 missing_tokens_freq = defaultdict(int)
 
 def parse_args():
-    """Implements CLI and config file system"""
+    """
+    Parse command line arguments and optional config file for training.
+
+    Returns:
+        argparse.Namespace: Parsed command line arguments with the following key parameters:
+            - config (str): Path to YAML config file to override arguments
+            - data (str): Directory with labeled image data
+            - dataset (str): Dataset type ('IAM', 'MNIST', 'custom')
+            - model (str): Model architecture to use
+            - epochs (int): Number of training epochs
+            - batchsize (int): Training batch size
+            - lr (float): Learning rate
+            And many other training, data, and output parameters
+    """
     p = argparse.ArgumentParser('TrOCR Training')
     
     # Config override
@@ -82,7 +95,24 @@ def parse_args():
     return args
 
 def train(args):
-    """Main training function"""
+    """
+    Main training function for OCR model training.
+
+    Handles the complete training pipeline including:
+    - Model and data initialization
+    - Training loop with validation and testing
+    - Metric tracking and visualization
+    - Model checkpointing and saving
+
+    Args:
+        args (argparse.Namespace): Training configuration parameters including:
+            - model: Model architecture to use
+            - data: Training data directory
+            - epochs: Number of training epochs
+            - batchsize: Training batch size
+            - lr: Learning rate
+            And other parameters from parse_args()
+    """
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -184,9 +214,33 @@ def train(args):
     processor.save_pretrained(output_dir)
     logger.info(f"Model saved to {output_dir}")
 
-def evaluate(model, optimizer,dataloader, processor, device, args, 
+def evaluate(model, optimizer, dataloader, processor, device, args, 
              token_to_char_map, logger, epoch, predictions_dir=None, prefix="EVAL"):
-    """Run evaluation loop"""
+    """
+    Run evaluation loop for model validation or testing.
+
+    Args:
+        model: The OCR model to evaluate
+        optimizer: Model optimizer (for logging learning rate)
+        dataloader: DataLoader containing evaluation data
+        processor: Text processor for encoding/decoding
+        device: Computing device (CPU/GPU)
+        args: Training arguments
+        token_to_char_map: Mapping from token IDs to characters
+        logger: Logger instance
+        epoch (int): Current training epoch
+        predictions_dir (str, optional): Directory to save predictions
+        prefix (str, optional): Prefix for logging ("EVAL" or "TEST")
+
+    Returns:
+        dict: Dictionary containing averaged metrics:
+            - loss: Average loss
+            - cer: Character Error Rate
+            - wer: Word Error Rate
+            - acc: Accuracy
+            - char_acc: Character-level accuracy
+            - lev_dist: Levenshtein distance
+    """
     model.eval()
     metrics_totals = {
         'loss': 0.0, 'cer': 0.0, 'wer': 0.0, 
@@ -212,21 +266,6 @@ def evaluate(model, optimizer,dataloader, processor, device, args,
             # Decode predictions and labels
             label_str = processor.batch_decode(labels_adj, skip_special_tokens=True)
             pred_str = processor.batch_decode(pred_ids, skip_special_tokens=True)
-
-            # Custom decode predictions and labels
-            # pred_str = []
-            # for ids in pred_ids:
-            #     decoded = custom_decode(
-            #         ids.tolist(), processor.tokenizer,
-            #         token_to_char_map, logger)
-            #     pred_str.append(decoded)
-            
-            # label_str = []
-            # for ids in labels_adj:
-            #     decoded = custom_decode(
-            #         ids.tolist(), processor.tokenizer,
-            #         token_to_char_map, logger)
-            #     label_str.append(decoded)
 
             if len(pred_str) != len(label_str):
                 pred_str = pred_str * len(label_str) if len(pred_str) == 1 else pred_str[:len(label_str)]

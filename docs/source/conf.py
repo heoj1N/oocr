@@ -3,10 +3,10 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 # Project information
-project = 'OOCR Training'
-copyright = '2024, Your Name'
-author = 'Your Name'
-release = '0.1.0'  # Add version number
+project = 'OOCR'
+copyright = '2024, Philipp Wagner'
+author = 'Philipp Wagner'
+release = '0.1.0'
 
 # Extensions
 extensions = [
@@ -18,7 +18,7 @@ extensions = [
 ]
 
 # Theme settings
-html_theme = 'sphinx_rtd_theme'  # Use Read the Docs theme
+html_theme = 'alabaster'  # Use Read the Docs theme
 html_static_path = ['_static']
 
 # Napoleon settings

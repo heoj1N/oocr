@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 import pdfplumber
 import easyocr
 import warnings
-import util
+import oocr.utils.util as util
 import argparse
 import json
 

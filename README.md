@@ -1,6 +1,6 @@
 <div align="center">
 
-# Transformer-Based OCR
+# OOCR
 
 **A Framework for Training Transformer-Based Text Detection Models**
 

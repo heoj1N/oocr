@@ -12,10 +12,10 @@ from typing import Dict, Any
 import random
 import numpy as np
 import torch
-from dataset import (
+from oocr.data.datasets.dataset import (
     get_dataset
 )
-import util
+import oocr.utils.util as util
 import time
 import logging
 from logging import FileHandler, StreamHandler, Formatter
