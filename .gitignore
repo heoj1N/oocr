@@ -8,6 +8,8 @@ data/datasets/*
 
 .github/TODO.md
 
+.ruff_cache/
+
 # data/configs/*
 # !data/configs/config.yaml.gitkeep
 
